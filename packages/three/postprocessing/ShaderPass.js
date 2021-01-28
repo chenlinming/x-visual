@@ -7,7 +7,7 @@ import {
 	UniformsUtils
 } from "../three.module-MRTSupport.js"
 
-import { Pass } from "../postprocessing/Pass.js";
+import { Pass } from "./Pass.js";
 
 var ShaderPass = function ( shader, textureID ) {
 

@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>XTest- Light on GeoPrism</title>
+   
+    <script type='text/javascript' src='../../../dist/xv-0.3.0.min.js'></script>
+</head>
+<body>
+  <canvas id='canv'></canvas>
+  <br><a id='ajson'>json</a>
+  
+  <script>
+    "use strict";
+	
+	const uri = '../data/polygon02.json';
+	// const uri = 'http://127.0.0.1:8080/xv/json/polygon02.json';
+	// also this 'https://raw.githubusercontent.com/odys-z/x-visual/master/test/html/data/polygon02.json';
+
+	const o0 = [11584957, 3585100];
+	document.getElementById('ajson').href = uri;
+
+    const position = [200, 100, 400];
+    const asset = 'data:application/x-visual+img,gray-pixel';
+
+    const xworld = new xv.XWorld( document.getElementById('canv'), window,
+        { // finalQuad: { debug: true },
+         
+		    canvasize: [1024, 1024],
+		    frustum: {
+		        fov: 50,
+		        near: 0.1,
+		        far: 6000,
+		       
+		       ratio: 1
+		    }   
+           
+        } );
+    const ecs = xworld.xecs;
+    const THREE = xworld.x.THREE;
+    //console.log(vs,fs)
+    	//console.log(xworld);
+    const vs = `
+    void main() {
+    vec4 vP = modelMatrix * vec4(position, 1.0);
+    gl_Position = projectionMatrix * viewMatrix * vP;
+  	}`;
+	const fs = `
+   uniform vec4 u_color;
+  // out vec4 pc_FragColor;
+  
+    
+    void main() {
+        pc_FragColor =  u_color;
+        xColor = vec4(0.0);
+        xEnvSpecular = vec4(0.0);
+        xBokehDepth = vec4(0.0);
+    }`
+	//let m = new THREE.MeshBasicMaterial({color:0xff0000,isMrt:true})
+	//let material = xworld.x.Thrender.addMaterial(vs,fs,{u_color:{value:[1.0,0.0,0.0,0.0]}});
+	//let material = new THREE.ShaderMaterial({vertexShader:vs,fragmentShader:fs,uniforms:{u_color:{value:[1.0,1.0,0.0,0.0]}},isMrt:true});
+	//let material = new THREE.MeshBasicMaterial({color:0xff0000,isMrt:true});
+	//console.log(material);
+    //ecs.registerComponent('CBoundCubes', xv.map3.CBoundCubes );
+    //RawShaderMaterial
+	//let material = new THREE.MeshBasicMaterial({color:0xff0000,isMrt:true});
+	let material = new THREE.MeshPhongMaterial({color:0x2194ce,specular:0xffffff,shiniess:30,isMrt:true});
+	//console.dir(material);
+	
+   xworld.addEntities([
+	 
+     
+	  
+	   { id: 'texprism-1',
+        Obj3: { geom: xv.XComponent.Obj3Type.GeoPrism,
+                transform: [ {translate: [-120, -30, -0]} ],
+                mesh: { castShadow: true,
+                        receiveShadow: true },
+                box: [] },
+        Visual:{
+            vtype: xv.AssetType.mesh,
+            material:material,
+           // shader: xv.XComponent.ShaderFlag.texEnv,
+            paras: {
+                whiteAlphas: [.5, 0.5], // roof, side reflection, 0~1, default 0.5
+                // lod of cube texture, [refract, reflect], >= 0
+                lod: [2, 2],            // reflect LOD of [base, lateral]
+                envExposure: .4,       // > 0,  = 1 will keep original, only for EXR
+                uvScale: [5, 2],
+				texScale: 42,
+                u_texbump: [0.25, 0.25], // roof, lateral
+                u_tex: [
+                    '../../assets/tex/bricks.jpg',     // 0: base faces (roof)
+                    '../../assets/tex/building-high.png',       // 1: lateral faces (wall)
+                    '../../assets/tex/byr0.png'],      // 2: optional, layer faces (floor)
+                maxVerts: 1024 * 16,
+                // features: json0.features,
+				uri, origin: o0,
+                geostyle: { height: 100, scale: 2.5, }
+            } } 
+      },
+	   {
+					id: 'earth-detials',
+					Obj3: { geom: xv.XComponent.Obj3Type.USER,	// not used
+							box: [0, 0, 0],
+							transform: [
+								{scale: [40, 40, 40]},
+								{translate: [-30, 40, -50]},
+							],
+							mesh: undefined },
+					Visual:{vtype: xv.AssetType.gltf,
+							// https://www.cgtrader.com/items/2407021/download-page#
+							// asset: 'cgtrade_2407021_zemlia.glb'},
+							asset: 'build/成都市市级机关第六办公区_T.gltf'},
+					
+				}
+    ]);
+    
+   
+   // xworld.addSystem('test',
+   //     new xv.map3.BoundingCubes(xworld.xecs, {xscene: xworld.xscene}));
+    xworld.startUpdate();
+//console.log(xworld);
+
+  </script>
+</body>
+</html>
