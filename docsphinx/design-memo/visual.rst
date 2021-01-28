@@ -1,7 +1,7 @@
 .. _visual-renderer:
 
-Visual & Renderers
-==================
+Visual & Assets
+===============
 
 X-visual rendering 3d scene with Three.js, wrapped in a rendere, Thrender system.
 The Thrender handling 2 components, Visual & Obj3, by converting parameters in a
@@ -18,8 +18,8 @@ The Obj3 Component specify the geometry or shape such as plane, box or path type
 
 See :ref:`obj3-transform-guide`
 
-Thrender the Default
---------------------
+Thrender
+--------
 
 Thrender is the xv default renderer, handling Visual and Obj3 components. Created by xworld.startUpdate().
 
